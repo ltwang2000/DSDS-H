@@ -12,6 +12,7 @@ We propose a hierarchical multimodal NMT method based on dynamic semantic select
 * sacrebleu version == 1.5.1
 
 # Install fairseq
+You need to load the complete fairseq framework and place the code into the corresponding files before it can run！！！
 
 ```bash
 cd fairseq_mmt
@@ -49,7 +50,7 @@ flickr30k
   script parameters:
   - ```dataset```: choices=['train', 'val', 'test2016', 'test2017', 'testcoco']
   - ```path```:    '/path/to/your/flickr30k'
-
+  ```
 #### 2. Faster-R-CNN
 
   python extract_grid_features.py --dataset train --path ./flickr30k --data_path data-bin
@@ -57,56 +58,61 @@ flickr30k
   script parameters:
   - ```dataset```: choices=['train', 'val', 'test2016', 'test2017', 'testcoco']
   - ```path```:    '/path/to/your/flickr30k'
+  ```
 
 # Train and Test
 #### 1. Train
-fairseq-train data-bin/en-de \
-  --arch my_transformer \
-  --task my_translation \
-  --valid-subset valid,test2016 \
-  --share-decoder-input-output-embed \
-  --optimizer adam --adam-betas '(0.9, 0.98)' \
-  --clip-norm 0.1 \
-  --lr 0.001 \
-  --lr-scheduler inverse_sqrt \
-  --warmup-init-lr 1e-07 \
-  --min-lr 1e-09 \
-  --warmup-updates 4000 \
-  --max-update 4700 \
-  --max-tokens 4096 \
-  --dropout 0.3 \
-  --attention-dropout 0.1 \
-  --activation-dropout 0.1\
-  --weight-decay 0.0001 \
-  --criterion label_smoothed_cross_entropy \
-  --label-smoothing 0.2 \
-  --update-freq 4 \
-  --eval-bleu \
-  --eval-bleu-args '{"beam": 5, "lenpen": 1.2, "max_len_a": 1.2, "max_len_b": 10}' \
-  --eval-bleu-detok moses \
-  --eval-bleu-remove-bpe \
-  --best-checkpoint-metric bleu --maximize-best-checkpoint-metric \
-  --keep-last-epochs 10 \
-  --eval-bleu-print-samples \
-  --patience 15 \
-  --no-progress-bar \
-  --log-format simple \
-  --tensorboard-logdir results/en-de/logdir \
-  --save-dir checkpoints/your_path \
-  --fp16
-#### 2. Test(mask1 as an example)
-fairseq-generate data-bin/en-de \
-  --path checkpoints/your_model/checkpoint_best.pt \
-  --task my_translation \
-  --num-workers 4 \
-  --batch-size 128 \
-  --beam 5 --lenpen 1.2 --max-len-a 1.2 --max-len-b 10 \
-  --gen-subset dataset \
-  --remove-bpe \
-  --scoring sacrebleu \
-  --output results/your.out
+
+    fairseq-train data-bin/en-de \
+      --arch my_transformer \
+      --task my_translation \
+      --valid-subset valid,test2016 \
+      --share-decoder-input-output-embed \
+      --optimizer adam --adam-betas '(0.9, 0.98)' \
+      --clip-norm 0.1 \
+      --lr 0.001 \
+      --lr-scheduler inverse_sqrt \
+      --warmup-init-lr 1e-07 \
+      --min-lr 1e-09 \
+      --warmup-updates 4000 \
+      --max-update 4700 \
+      --max-tokens 4096 \
+      --dropout 0.3 \
+      --attention-dropout 0.1 \
+      --activation-dropout 0.1\
+      --weight-decay 0.0001 \
+      --criterion label_smoothed_cross_entropy \
+      --label-smoothing 0.2 \
+      --update-freq 4 \
+      --eval-bleu \
+      --eval-bleu-args '{"beam": 5, "lenpen": 1.2, "max_len_a": 1.2, "max_len_b": 10}' \
+      --eval-bleu-detok moses \
+      --eval-bleu-remove-bpe \
+      --best-checkpoint-metric bleu --maximize-best-checkpoint-metric \
+      --keep-last-epochs 10 \
+      --eval-bleu-print-samples \
+      --patience 15 \
+      --no-progress-bar \
+      --log-format simple \
+      --tensorboard-logdir results/en-de/logdir \
+      --save-dir checkpoints/your_path \
+      --fp16 
+    
+#### 2. Test
+
+      fairseq-generate data-bin/en-de \
+        --path checkpoints/your_model/checkpoint_best.pt \
+        --task my_translation \
+        --num-workers 4 \
+        --batch-size 128 \
+        --beam 5 --lenpen 1.2 --max-len-a 1.2 --max-len-b 10 \
+        --gen-subset dataset \
+        --remove-bpe \
+        --scoring sacrebleu \
+        --output results/your.out
+
 
 # Visualization
-
-python draw_high_layer_cross_modal.py
-...
+```
+  python draw_high_layer_cross_modal.py
+```
